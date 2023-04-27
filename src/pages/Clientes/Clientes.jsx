@@ -3,12 +3,17 @@ import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Loader } from "../../components/Loader/Loader";
+import { toast } from "react-hot-toast";
 
 export function Clientes() {
 
     const [clientes, setClientes] = useState(null);
 
     useEffect(() => {
+        initializeTable();
+    }, []);
+
+    function initializeTable() {
         axios.get("http://localhost:3001/clientes")
             .then(response => {
                 setClientes(response.data);
@@ -16,7 +21,22 @@ export function Clientes() {
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+    }
+
+    function onDelete(id) {
+        const isConfirm = window.confirm("Tem certeza que deseja excluir o cliente?");
+        if(isConfirm) {
+            axios.delete(`http://localhost:3001/clientes/${id}`)
+                .then(response => {
+                    toast.success(response.data.message, { position: "bottom-right", duration: 2000 });
+                    initializeTable();
+                })
+                .catch(error => {
+                    console.log(error);
+                    toast.error(error.response.data.message, { position: "bottom-right", duration: 2000 });
+                });
+        }
+    }
 
     return (
         <div className="clientes container">
@@ -47,7 +67,7 @@ export function Clientes() {
                                         <td>{cliente.email}</td>
                                         <td>{cliente.telefone}</td>
                                         <td className="d-flex gap-2">
-                                            <Button>
+                                            <Button onClick={() => onDelete(cliente.id)}>
                                                 <i className="bi bi-trash-fill"></i>
                                             </Button>
                                             <Button>
