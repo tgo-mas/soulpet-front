@@ -3,6 +3,7 @@ import { Root } from "./pages/Root/Root";
 import { Home } from "./pages/Home/Home";
 import { NovoCliente } from "./pages/NovoCliente/NovoCliente";
 import { Clientes } from "./pages/Clientes/Clientes";
+import { EditaCliente } from "./pages/EditaCliente/EditaCliente";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/clientes/novo" element={<NovoCliente />} />
+          <Route path="/clientes/editar/:id" element={<EditaCliente />} />
         </Route>
       </Routes>
     </BrowserRouter>
