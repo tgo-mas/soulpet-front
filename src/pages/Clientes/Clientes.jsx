@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Modal, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Loader } from "../../components/Loader/Loader";
 import { toast } from "react-hot-toast";
@@ -8,6 +8,17 @@ import { toast } from "react-hot-toast";
 export function Clientes() {
 
     const [clientes, setClientes] = useState(null);
+    const [show, setShow] = useState(false);
+    const [idCliente, setIdCliente] = useState(null);
+  
+    const handleClose = () => {
+        setIdCliente(null);
+        setShow(false)
+    };
+    const handleShow = (id) => {
+        setIdCliente(id);
+        setShow(true)
+    };
 
     useEffect(() => {
         initializeTable();
@@ -23,19 +34,17 @@ export function Clientes() {
             });
     }
 
-    function onDelete(id) {
-        const isConfirm = window.confirm("Tem certeza que deseja excluir o cliente?");
-        if(isConfirm) {
-            axios.delete(`http://localhost:3001/clientes/${id}`)
-                .then(response => {
-                    toast.success(response.data.message, { position: "bottom-right", duration: 2000 });
-                    initializeTable();
-                })
-                .catch(error => {
-                    console.log(error);
-                    toast.error(error.response.data.message, { position: "bottom-right", duration: 2000 });
-                });
-        }
+    function onDelete() {
+        axios.delete(`http://localhost:3001/clientes/${idCliente}`)
+            .then(response => {
+                toast.success(response.data.message, { position: "bottom-right", duration: 2000 });
+                initializeTable();
+            })
+            .catch(error => {
+                console.log(error);
+                toast.error(error.response.data.message, { position: "bottom-right", duration: 2000 });
+            });
+        handleClose();
     }
 
     return (
@@ -67,7 +76,7 @@ export function Clientes() {
                                         <td>{cliente.email}</td>
                                         <td>{cliente.telefone}</td>
                                         <td className="d-flex gap-2">
-                                            <Button onClick={() => onDelete(cliente.id)}>
+                                            <Button onClick={() => handleShow(cliente.id)}>
                                                 <i className="bi bi-trash-fill"></i>
                                             </Button>
                                             <Button>
@@ -80,6 +89,20 @@ export function Clientes() {
                         </tbody>
                     </Table>
             }
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmação</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Tem certeza que deseja excluir o cliente?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={handleClose}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={onDelete}>
+                        Excluir
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
