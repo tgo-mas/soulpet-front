@@ -90,7 +90,7 @@ export function Pets() {
                                         <Button className="m-2" onClick={() => handleShow(pet.id)}>
                                             <i className="bi bi-trash-fill"></i>
                                         </Button>
-                                        <Button className="m-2">
+                                        <Button className="m-2" as={Link} to={`/pets/editar/${pet.id}`}>
                                             <i className="bi bi-pencil-fill"></i>
                                         </Button>
                                     </td>
