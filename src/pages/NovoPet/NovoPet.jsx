@@ -3,11 +3,13 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export function NovoPet() {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [clientes, setClientes] = useState([]);
+    const navigator = useNavigate();
 
     useEffect(() => {
         axios.get(`http://localhost:3001/clientes`)
@@ -23,6 +25,7 @@ export function NovoPet() {
         axios.post("http://localhost:3001/pets", data)
             .then(res => {
                 toast.success("Pet criado com sucesso!");
+                navigator("/pets");
             })
             .catch(err => {
                 toast.error("Um erro aconteceu!");
