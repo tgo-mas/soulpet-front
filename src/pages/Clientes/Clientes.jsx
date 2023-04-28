@@ -50,16 +50,17 @@ export function Clientes() {
     return (
         <div className="clientes container">
             <div className="d-flex justify-content-between align-items-center">
-                <h1>Clientes</h1>
+                <h1 className="m-4">Clientes</h1>
                 <Button as={Link} to="/clientes/novo">
                     <i className="bi bi-plus-lg me-2"></i> Cliente
                 </Button>
             </div>
+            <hr />
             {
                 clientes === null ?
                     <Loader />
                     :
-                    <Table striped bordered hover>
+                    <Table striped bordered hover className="text-center">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -75,11 +76,11 @@ export function Clientes() {
                                         <td>{cliente.nome}</td>
                                         <td>{cliente.email}</td>
                                         <td>{cliente.telefone}</td>
-                                        <td className="d-flex gap-2">
-                                            <Button onClick={() => handleShow(cliente.id)}>
+                                        <td>
+                                            <Button className="m-2" onClick={() => handleShow(cliente.id)}>
                                                 <i className="bi bi-trash-fill"></i>
                                             </Button>
-                                            <Button as={Link} to={`/clientes/editar/${cliente.id}`}>
+                                            <Button className="m-2" as={Link} to={`/clientes/editar/${cliente.id}`}>
                                                 <i className="bi bi-pencil-fill"></i>
                                             </Button>
                                         </td>
