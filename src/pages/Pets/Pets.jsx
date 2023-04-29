@@ -22,6 +22,18 @@ export function Pets() {
         setShow(false);
     }
 
+    const showPet = (id) => {
+      buscarPet(id).then((pet) => {
+        setSelectedPet(pet);
+        setShowConfirmationModal(true);
+      });
+    };
+
+    const handleCloseConfirmationModal = () => {
+      setShowConfirmationModal(false);
+      setSelectedPet(null);
+    };
+
     function onDelete() {
         axios.delete(`http://localhost:3001/pets/${idPet}`)
             .then(response => {
@@ -55,6 +67,24 @@ export function Pets() {
     useEffect(() => {
         initializeTable();
     }, [])
+
+    const buscarPet = (id) => {
+        return axios
+        .get(`http://localhost:3001/pets/${id}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+            toast.error(error.response.data.message, {
+            position: "bottom-right",
+            duration: 2000,
+            });
+        });
+  };
+
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [selectedPet, setSelectedPet] = useState(null);
 
     return (
         <div className="container">
@@ -93,6 +123,9 @@ export function Pets() {
                                         <Button className="m-2" as={Link} to={`/pets/editar/${pet.id}`}>
                                             <i className="bi bi-pencil-fill"></i>
                                         </Button>
+                                        <Button className="m-2" onClick={() => showPet(pet.id)}>
+                                                <i className="bi bi-exclamation-square-fill"></i>
+                                        </Button>
                                     </td>
                                 </tr>
                             )
@@ -114,6 +147,26 @@ export function Pets() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={showConfirmationModal} onHide={handleCloseConfirmationModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Informações do Pet</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            {selectedPet && (
+                <>
+                <p>ID: {selectedPet.id}</p>
+                <p>Nome: {selectedPet.nome}</p>
+                <p>Tipo: {selectedPet.tipo}</p>
+                <p>Porte: {selectedPet.porte}</p>
+                </>
+            )}
+            </Modal.Body>
+            <Modal.Footer>
+            <Button variant="danger" onClick={handleCloseConfirmationModal}>
+                Fechar
+            </Button>
+            </Modal.Footer>
+        </Modal>
         </div>
     );
 }
