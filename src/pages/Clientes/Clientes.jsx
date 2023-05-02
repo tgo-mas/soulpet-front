@@ -1,51 +1,90 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Loader } from "../../components/Loader/Loader";
+import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Loader } from "../../components/Loader/Loader";
 
 export function Clientes() {
+    
+  const [clientes, setClientes] = useState([]);
+  const [show, setShow] = useState(false);
+  const [idCliente, setIdCliente] = useState(null);
 
-    const [clientes, setClientes] = useState(null);
-    const [show, setShow] = useState(false);
-    const [idCliente, setIdCliente] = useState(null);
-  
-    const handleClose = () => {
-        setIdCliente(null);
-        setShow(false)
-    };
-    const handleShow = (id) => {
-        setIdCliente(id);
-        setShow(true)
-    };
+  const handleClose = () => {
+    setIdCliente(null);
+    setShow(false);
+  };
 
-    useEffect(() => {
-        initializeTable();
-    }, []);
+  const handleShow = (id) => {
+    setIdCliente(id);
+    setShow(true);
+  };
 
-    function initializeTable() {
-        axios.get("http://localhost:3001/clientes")
-            .then(response => {
-                setClientes(response.data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
+  const showCliente = (id) => {
+    buscarCliente(id).then((cliente) => {
+      setSelectedCliente(cliente);
+      setShowConfirmationModal(true);
+    });
+  };
 
-    function onDelete() {
-        axios.delete(`http://localhost:3001/clientes/${idCliente}`)
-            .then(response => {
-                toast.success(response.data.message, { position: "bottom-right", duration: 2000 });
-                initializeTable();
-            })
-            .catch(error => {
-                console.log(error);
-                toast.error(error.response.data.message, { position: "bottom-right", duration: 2000 });
-            });
-        handleClose();
-    }
+  const handleCloseConfirmationModal = () => {
+    setShowConfirmationModal(false);
+    setSelectedCliente(null);
+  };
+
+  const onDelete = () => {
+    axios
+      .delete(`http://localhost:3001/clientes/${idCliente}`)
+      .then((response) => {
+        toast.success(response.data.message, {
+          position: "bottom-right",
+          duration: 2000,
+        });
+        setClientes(clientes.filter((cliente) => cliente.id !== idCliente));
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message, {
+          position: "bottom-right",
+          duration: 2000,
+        });
+      });
+    handleClose();
+  };
+
+  useEffect(() => {
+    initializeTable();
+  }, []);
+
+  const initializeTable = () => {
+    axios
+      .get("http://localhost:3001/clientes")
+      .then((response) => {
+        setClientes(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const buscarCliente = (id) => {
+    return axios
+      .get(`http://localhost:3001/clientes/${id}`)
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message, {
+          position: "bottom-right",
+          duration: 2000,
+        });
+      });
+  };
+
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [selectedCliente, setSelectedCliente] = useState(null);
 
     return (
         <div className="clientes container">
@@ -83,6 +122,9 @@ export function Clientes() {
                                             <Button className="m-2" as={Link} to={`/clientes/editar/${cliente.id}`}>
                                                 <i className="bi bi-pencil-fill"></i>
                                             </Button>
+                                            <Button className="m-2" onClick={() => showCliente(cliente.id)}>
+                                                <i className="bi bi-exclamation-square-fill"></i>
+                                            </Button>
                                         </td>
                                     </tr>
                                 )
@@ -104,6 +146,27 @@ export function Clientes() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            
+      <Modal show={showConfirmationModal} onHide={handleCloseConfirmationModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Informações do Cliente</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            {selectedCliente && (
+                <>
+                <p>ID: {selectedCliente.id}</p>
+                <p>Nome: {selectedCliente.nome}</p>
+                <p>Email: {selectedCliente.email}</p>
+                <p>Telefone: {selectedCliente.telefone}</p>
+                </>
+            )}
+            </Modal.Body>
+            <Modal.Footer>
+            <Button variant="danger" onClick={handleCloseConfirmationModal}>
+                Fechar
+            </Button>
+            </Modal.Footer>
+        </Modal>
         </div>
     );
 }
