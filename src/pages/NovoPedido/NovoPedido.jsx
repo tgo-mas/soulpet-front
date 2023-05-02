@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -6,6 +7,21 @@ import { useNavigate } from "react-router-dom";
 
 
 export function NovoPedido() {
+    const [produtos, setProdutos] = useState([]);
+    const [clientes, setClientes] = useState([]);
+
+    useEffect(() => {
+        axios.get("http://localhost:3001/produtos").then((response) => {
+            setProdutos(response.data);
+        });
+    }, []);
+
+    useEffect(() => {
+        axios.get("http://localhost:3001/clientes").then((response) => {
+            setClientes(response.data);
+        });
+    }, []);
+
     const { register, handleSubmit, formState: { errors }, control } = useForm();
     const navigate = useNavigate();
 
@@ -76,7 +92,14 @@ export function NovoPedido() {
                                         message: "Este campo é obrigatório.",
                                     },
                                 })}
-                            />
+                            >
+                                <option value="">Selecione o produto</option>
+                                {produtos.map((produto) => (
+                                    <option key={produto.id} value={produto.id}>
+                                        {produto.nome}
+                                    </option>
+                                ))}
+                            </Form.Control>
                             {errors.pedidos?.[index]?.produto?.type === "required" && (
                                 <Form.Text className="invalid-feedback">
                                     {errors.pedidos[index].produto.message}
@@ -97,7 +120,14 @@ export function NovoPedido() {
                                         message: "Este campo é obrigatório.",
                                     },
                                 })}
-                            />
+                            >
+                                <option value="">Selecione o cliente</option>
+                                {clientes.map((cliente) => (
+                                    <option key={cliente.id} value={cliente.id}>
+                                        {cliente.nome}
+                                    </option>
+                                ))}
+                            </Form.Control>
                             {errors.pedidos?.[index]?.cliente?.type === "required" && (
                                 <Form.Text className="invalid-feedback">
                                     {errors.pedidos[index].cliente.message}
