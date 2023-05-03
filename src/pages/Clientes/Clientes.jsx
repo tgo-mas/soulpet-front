@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Loader } from "../../components/Loader/Loader";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 export function Clientes() {
     
@@ -86,6 +88,21 @@ export function Clientes() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState(null);
 
+  const gerarRelatorio = async () => {
+  const response = await axios.get("http://localhost:3001/pdf");
+  const html = await response.data;
+  const doc = new jsPDF();
+  const range = document.createRange();
+  const fragment = range.createContextualFragment(html);
+  const table = fragment.querySelector('table');
+  doc.autoTable({
+  html: table,
+  });
+  const pdfBlob = new Blob([doc.output('blob')], { type: 'application/pdf' });
+  const pdfUrl = window.URL.createObjectURL(pdfBlob);
+  window.open(pdfUrl);
+  };
+
     return (
         <div className="clientes container">
             <div className="d-flex justify-content-between align-items-center">
@@ -167,6 +184,7 @@ export function Clientes() {
             </Button>
             </Modal.Footer>
         </Modal>
+        <Button className="m-2" onClick={gerarRelatorio}>Gerar Relatório</Button>
         </div>
     );
 }
