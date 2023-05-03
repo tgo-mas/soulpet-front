@@ -14,22 +14,14 @@ export function Servicos() {
 
     const handleClose = () => {
         setIdServico(null);
-        setShow(false)
+        setShow(false);
     };
-    const handleShow = (id) => {
+    const handleShow = (id, nome) => {
         setIdServico(id);
-        setShow(true)
+        setNome(nome);
+        setShow(true);
     };
 
-    useEffect(() => {
-        axios.get(`http://localhost:3001/servicos/${idServico}`)
-        .then(response => {
-            setNome(response.data.nome);
-        })
-        .catch(console.error());
-    }, [idServico]);
-
-    // o useEffect passa a ter função de atualizacao e retorno da tabela apos uma ação
     useEffect(() => {
         initializeTable();
     }, []);
@@ -39,19 +31,21 @@ export function Servicos() {
         .then(response => {
             setServicos(response.data);
         })
-        .catch(console.error());
+        .catch(error => {
+            console.error(error);
+            toast.error(error.message, { position: "bottom-right", duration: 2000 });
+        });
     }
 
-    // função deletar
     function onDelete() {
         axios.delete(`http://localhost:3001/servicos/${idServico}`)
         .then(response => {
-            toast.success(response.data.message, { position: "bottom-right", duration: 2000 })
+            toast.success(response.data.message, { position: "bottom-right", duration: 2000 });
             initializeTable();
         })
         .catch(error => {
-            console.log(error);
-                toast.error(error.response.data.message, { position: "bottom-right", duration: 2000 });
+            console.error(error);
+            toast.error(error.message, { position: "bottom-right", duration: 2000 });
         });
         handleClose();
     }
@@ -60,7 +54,7 @@ export function Servicos() {
         <div className="servicos container">
             <div className="d-flex justify-content-between align-items-center">
                 <h1 className="m-4">Serviços</h1>
-                <Button as={Link} to ="/servicos/novo">Novo Serviço</Button>
+                <Button as={Link} to ="/servicos/novo"><i className="bi bi-plus-lg me-2"></i>Novo Serviço</Button>
             </div>
             <hr />
             {
@@ -81,7 +75,7 @@ export function Servicos() {
                                     <td>{servico.nome}</td>
                                     <td>{servico.preco}</td>
                                     <td>
-                                        <Button className="m2" onClick={() => handleShow(servico.id)}>
+                                        <Button variant="danger" className="m2" onClick={() => handleShow(servico.id, servico.nome)}>
                                             <i className="bi bi-trash-fill"></i>
                                         </Button>
                                         <Button className="m-2" as={Link} to={`/servicos/editar/${servico.id}`}>

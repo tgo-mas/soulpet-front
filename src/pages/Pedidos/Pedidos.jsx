@@ -7,7 +7,7 @@ import { Loader } from "../../components/Loader/Loader";
 import { Form } from 'react-bootstrap';
 
 export function Pedidos() {
-  const [pedidos, setPedidos] = useState([]);
+  const [pedidos, setPedidos] = useState(null);
   const [show, setShow] = useState(false);
   const [idPedido, setIdPedido] = useState(null);
   const [clienteFiltro, setClienteFiltro] = useState("");
@@ -15,7 +15,7 @@ export function Pedidos() {
   const [clienteNome, setClienteNome] = useState({});
   const [produtoNome, setProdutoNome] = useState({});
 
-   const handleClose = () => {
+  const handleClose = () => {
     setIdPedido(null);
     setShow(false);
   };
@@ -25,24 +25,17 @@ export function Pedidos() {
     setShow(true);
   };
 
-  const onDelete = () => {
-    axios
-      .delete(`http://localhost:3001/pedido/${idPedido}`)
-      .then((response) => {
-        toast.success(response.data.message, {
-          position: "bottom-right",
-          duration: 2000,
-        });
-        setPedidos(pedidos.filter((pedido) => pedido.id !== idPedido));
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error(error.response.data.message, {
-          position: "bottom-right",
-          duration: 2000,
-        });
-      });
-    handleClose();
+  const filtrarPedidos = (pedido) => {
+    const cliente = clienteNome[pedido.clienteId]
+      ? clienteNome[pedido.clienteId].toLowerCase()
+      : "";
+    const produto = produtoNome[pedido.produtoId]
+      ? produtoNome[pedido.produtoId].toLowerCase()
+      : "";
+    return (
+      cliente.includes(clienteFiltro.toLowerCase()) &&
+      produto.includes(produtoFiltro.toLowerCase())
+    );
   };
 
   useEffect(() => {
@@ -60,22 +53,17 @@ export function Pedidos() {
       });
   };
 
-  const filtrarPedidos = (pedido) => {
-    const cliente = clienteNome[pedido.clienteId]
-      ? clienteNome[pedido.clienteId].toLowerCase()
-      : "";
-    const produto = produtoNome[pedido.produtoId]
-      ? produtoNome[pedido.produtoId].toLowerCase()
-      : "";
-    return (
-      cliente.includes(clienteFiltro.toLowerCase()) &&
-      produto.includes(produtoFiltro.toLowerCase())
-    );
-  };
-
-  const handleDeletarPedido = (id) => {
-    const novosPedidos = pedidos.filter((pedido) => pedido.id !== id);
-    setPedidos(novosPedidos);
+  const onDelete = () => {
+    axios.delete(`http://localhost:3001/pedidos/${idPedido}`)
+      .then((response) => {
+        toast.success(response.data.message, { position: "bottom-right", duration: 2000, });
+        setPedidos(pedidos.filter(pedido => pedido.id !== idPedido));
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message, { position: "bottom-right", duration: 2000, });
+      });
+    handleClose();
   };
 
   useEffect(() => {
@@ -179,14 +167,14 @@ export function Pedidos() {
           <tbody>
             {pedidos.filter(filtrarPedidos).map((pedido) => {
               return (
-                <tr key={pedido.id}>
+                <tr key={pedido.codigo}>
                   <td>{pedido.quantidade}</td>
                   <td>{clienteNome[pedido.clienteId]}</td>
                   <td>{produtoNome[pedido.produtoId]}</td>
                   <td className="d-flex gap-2">
                     <Button
                       variant="danger"
-                      onClick={() => handleDeletarPedido(pedido.id)}
+                      onClick={() => handleShow(pedido.id)}
                     >
                       <i className="bi bi-trash-fill"></i>
                     </Button>
@@ -206,13 +194,6 @@ export function Pedidos() {
                     >
                       <i className="bi bi-info-circle-fill"></i>
                     </Button>
-
-                    <Button
-                      className="m-2"
-                      onClick={() => handleShow(pedido.id)}
-                    >
-                      <i className="bi bi-trash-fill"></i>
-                    </Button>
                   </td>
                 </tr>
               );
@@ -226,11 +207,11 @@ export function Pedidos() {
         </Modal.Header>
         <Modal.Body>Tem certeza que deseja excluir o pedido?</Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleClose}>
-            Cancelar
-          </Button>
-          <Button variant="primary" onClick={onDelete}>
+          <Button variant="danger" onClick={onDelete}>
             Excluir
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Cancelar
           </Button>
         </Modal.Footer>
       </Modal>
