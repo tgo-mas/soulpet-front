@@ -116,13 +116,13 @@ export function Clientes() {
                                         <td>{cliente.email}</td>
                                         <td>{cliente.telefone}</td>
                                         <td>
-                                            <Button className="m-2" onClick={() => handleShow(cliente.id)}>
+                                            <Button variant="danger" className="m-2" onClick={() => handleShow(cliente.id)}>
                                                 <i className="bi bi-trash-fill"></i>
                                             </Button>
                                             <Button className="m-2" as={Link} to={`/clientes/editar/${cliente.id}`}>
                                                 <i className="bi bi-pencil-fill"></i>
                                             </Button>
-                                            <Button className="m-2" onClick={() => showCliente(cliente.id)}>
+                                            <Button variant="success" className="m-2" onClick={() => showCliente(cliente.id)}>
                                                 <i className="bi bi-exclamation-square-fill"></i>
                                             </Button>
                                         </td>

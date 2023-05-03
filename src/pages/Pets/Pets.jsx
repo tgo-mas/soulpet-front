@@ -7,7 +7,7 @@ import { Loader } from "../../components/Loader/Loader";
 
 export function Pets() {
 
-    const [pets, setPets] = useState(null);
+    const [pets, setPets] = useState(); 
     const [clientes, setClientes] = useState(null);
     const [show, setShow] = useState(false);
     const [idPet, setIdPet] = useState(null);
@@ -117,13 +117,13 @@ export function Pets() {
                                     <td>{pet.porte}</td>
                                     <td>{Intl.DateTimeFormat("pt-br").format(Date.parse(pet.dataNasc))}</td>
                                     <td>
-                                        <Button className="m-2" onClick={() => handleShow(pet.id)}>
+                                        <Button variante="danger" className="m-2" onClick={() => handleShow(pet.id)}>
                                             <i className="bi bi-trash-fill"></i>
                                         </Button>
                                         <Button className="m-2" as={Link} to={`/pets/editar/${pet.id}`}>
                                             <i className="bi bi-pencil-fill"></i>
                                         </Button>
-                                        <Button className="m-2" onClick={() => showPet(pet.id)}>
+                                        <Button variant="success" className="m-2" onClick={() => showPet(pet.id)}>
                                                 <i className="bi bi-exclamation-square-fill"></i>
                                         </Button>
                                     </td>
