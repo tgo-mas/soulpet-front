@@ -115,7 +115,7 @@ export function Produto() {
                 <Button className="m-2" onClick={() => handleShow(produto.id)}>
                     <i className="bi bi-trash-fill"></i>
                 </Button>
-                <Button className="m-2" as={Link} to={`/produto/editar/${produto.id}`}>
+                <Button className="m-2" as={Link} to={`/produtos/editar/${produto.id}`}>
                     <i className="bi bi-pencil-fill"></i>
                 </Button>
                 <Button className="m-2" onClick={() => showProduto(produto.id)}>
