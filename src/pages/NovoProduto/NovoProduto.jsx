@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, InputGroup } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -33,19 +33,27 @@ export function NovoProduto() {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Preço do Produto:</Form.Label>
-                    <Form.Control type="number" className={errors.preco && "is-invalid"} {...register("preco", { required: "O preço do produto é obrigatório.", min: { value: 0, message: "O preço deve ser maior ou igual a zero." } })} />
-                    {errors.preco && <Form.Text className="invalid-feedback">{errors.preco.message}</Form.Text>}
+                    <InputGroup className='mb-3'>
+
+                        <InputGroup.Text>R$</InputGroup.Text>
+                        <Form.Control type="number" className={errors.preco && "is-invalid"} {...register("preco", { required: "O preço do produto é obrigatório.", min: { value: 0, message: "O preço deve ser maior ou igual a zero." } })} />
+                        {errors.preco && <Form.Text className="invalid-feedback">{errors.preco.message}</Form.Text>}
+                        <InputGroup.Text>,00</InputGroup.Text>
+                    </InputGroup>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Desconto:</Form.Label>
+                    <InputGroup className='mb-3'>
                     <Form.Control type="number" className={errors.desconto && "is-invalid"} {...register("desconto", { required: "O desconto é obrigatório.", min: { value: 0, message: "O desconto deve ser maior ou igual a zero." }, max: { value: 100, message: "O desconto não pode ser maior que 100." } })} />
                     {errors.desconto && <Form.Text className="invalid-feedback">{errors.desconto.message}</Form.Text>}
+                    <InputGroup.Text>%</InputGroup.Text>
+                    </InputGroup>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Data do Desconto:</Form.Label>
-                    <Form.Control type="date" className={errors.dataDesconto && "is-invalid"} {...register("dataDesconto", { required: "A data de expiração do desconto é obrigatória." })} />
+                    <Form.Control type="datetime-local" className={errors.dataDesconto && "is-invalid"} {...register("dataDesconto", { required: "A data de expiração do desconto é obrigatória." })} />
                     {errors.dataDesconto && <Form.Text className="invalid-feedback">{errors.dataDesconto.message}</Form.Text>}
                 </Form.Group>
 
