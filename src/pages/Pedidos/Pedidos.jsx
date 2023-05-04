@@ -11,10 +11,16 @@ export function Pedidos() {
   const [clientes, setClientes] = useState(null);
   const [produtos, setProdutos] = useState(null);
   const [show, setShow] = useState(false);
+  const [showDetalhes, setShowDetalhes] = useState(false);
   const [codigoPedido, setCodigoPedido] = useState(null);
   const [clienteFiltro, setClienteFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
+  const [selectedPedido, setSelectedPedido] = useState({});
 
+  const handleCloseDetalhes = () => {
+    setSelectedPedido({});
+    setShowDetalhes(false);
+  }
 
   const handleClose = () => {
     setCodigoPedido(null);
@@ -141,7 +147,11 @@ export function Pedidos() {
                       <i className="bi bi-pencil-fill"></i>
                     </Button>
 
-                    <Button variant="success" className="m-2" as={Link} to={`/pedidos/detalhes/${pedido.codigo}`}>
+                    <Button variant="success" className="m-2"
+                      onClick={() => {
+                        setSelectedPedido(pedido);
+                        setShowDetalhes(true);
+                      }}>
                       <i className="bi bi-exclamation-square-fill"></i>
                     </Button>
                   </td>
@@ -151,6 +161,26 @@ export function Pedidos() {
           </tbody>
         </Table>
       )}
+      <Modal show={showDetalhes} onHide={handleCloseDetalhes}>
+        <Modal.Header closeButton>
+          <Modal.Title>Informações do Pedido</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedPedido && (
+            <>
+              <p>ID: {selectedPedido.id}</p>
+              <p>Produto: {produtos[selectedPedido.produtoId]}</p>
+              <p>Quantidade: {selectedPedido.quantidade}</p>
+              <p>Cliente: {clientes[selectedPedido.clienteId]}</p>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleCloseDetalhes}>
+            Fechar
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmação</Modal.Title>
