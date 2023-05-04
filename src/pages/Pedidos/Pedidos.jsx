@@ -9,11 +9,13 @@ import { Form } from 'react-bootstrap';
 export function Pedidos() {
   const [pedidos, setPedidos] = useState(null);
   const [show, setShow] = useState(false);
+  const [showDetalhes, setShowDetalhes] = useState(false);
   const [idPedido, setIdPedido] = useState(null);
   const [clienteFiltro, setClienteFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
   const [clienteNome, setClienteNome] = useState({});
   const [produtoNome, setProdutoNome] = useState({});
+  const [selectedPedido, setSelectedPedido] = useState({});
 
   const handleClose = () => {
     setIdPedido(null);
@@ -24,6 +26,11 @@ export function Pedidos() {
     setIdPedido(id);
     setShow(true);
   };
+
+  const handleCloseDetalhes = () => {
+    setSelectedPedido({});
+    setShowDetalhes(false);
+  }
 
   const filtrarPedidos = (pedido) => {
     const cliente = clienteNome[pedido.clienteId]
@@ -171,7 +178,7 @@ export function Pedidos() {
                   <td>{pedido.quantidade}</td>
                   <td>{clienteNome[pedido.clienteId]}</td>
                   <td>{produtoNome[pedido.produtoId]}</td>
-                  <td className="d-flex gap-2">
+                  <td className="d-flex gap-3 justify-content-center">
                     <Button
                       variant="danger"
                       onClick={() => handleShow(pedido.codigo)}
@@ -188,11 +195,13 @@ export function Pedidos() {
                     </Button>
 
                     <Button
-                      variant="info"
-                      as={Link}
-                      to={`/pedidos/detalhes/${pedido.id}`}
+                      variant="success"
+                      onClick={() => {
+                        setSelectedPedido(pedido);
+                        setShowDetalhes(true);
+                      }}
                     >
-                      <i className="bi bi-info-circle-fill"></i>
+                      <i className="bi bi-exclamation-square-fill"></i>
                     </Button>
                   </td>
                 </tr>
@@ -201,6 +210,26 @@ export function Pedidos() {
           </tbody>
         </Table>
       )}
+      <Modal show={showDetalhes} onHide={handleCloseDetalhes}>
+        <Modal.Header closeButton>
+          <Modal.Title>Informações do Pedido</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedPedido && (
+            <>
+              <p>ID: {selectedPedido.id}</p>
+              <p>Produto: {produtoNome[selectedPedido.produtoId]}</p>
+              <p>Quantidade: {selectedPedido.quantidade}</p>
+              <p>Cliente: {clienteNome[selectedPedido.clienteId]}</p>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleCloseDetalhes}>
+            Fechar
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmação</Modal.Title>
