@@ -8,36 +8,52 @@ import { Form } from 'react-bootstrap';
 
 export function Pedidos() {
   const [pedidos, setPedidos] = useState(null);
+  const [clientes, setClientes] = useState(null);
+  const [produtos, setProdutos] = useState(null);
   const [show, setShow] = useState(false);
-  const [showDetalhes, setShowDetalhes] = useState(false);
-  const [idPedido, setIdPedido] = useState(null);
+  const [codigoPedido, setCodigoPedido] = useState(null);
   const [clienteFiltro, setClienteFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
-  const [clienteNome, setClienteNome] = useState({});
-  const [produtoNome, setProdutoNome] = useState({});
-  const [selectedPedido, setSelectedPedido] = useState({});
+
 
   const handleClose = () => {
-    setIdPedido(null);
+    setCodigoPedido(null);
     setShow(false);
   };
 
-  const handleShow = (id) => {
-    setIdPedido(id);
+  const handleShow = (codigo) => {
+    setCodigoPedido(codigo);
     setShow(true);
   };
 
-  const handleCloseDetalhes = () => {
-    setSelectedPedido({});
-    setShowDetalhes(false);
+  useEffect(() => {
+    initializeTable();
+  }, []);
+
+  const initializeTable = async () => {
+    try {
+      const pedidosRes = await axios.get("http://localhost:3001/pedidos");
+      const clientesRes = await axios.get("http://localhost:3001/clientes");
+      const produtosRes = await axios.get("http://localhost:3001/produtos");
+
+      setPedidos(pedidosRes.data);
+      setClientes(clientesRes.data.reduce(
+        (obj, cliente) => ({ ...obj, [cliente.id]: cliente.nome }), {}
+      ));
+      setProdutos(produtosRes.data.reduce(
+        (obj, produto) => ({ ...obj, [produto.id]: produto.nome }), {}
+      ));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const filtrarPedidos = (pedido) => {
-    const cliente = clienteNome[pedido.clienteId]
-      ? clienteNome[pedido.clienteId].toLowerCase()
+    const cliente = clientes[pedido.clienteId]
+      ? clientes[pedido.clienteId].toLowerCase()
       : "";
-    const produto = produtoNome[pedido.produtoId]
-      ? produtoNome[pedido.produtoId].toLowerCase()
+    const produto = produtos[pedido.produtoId]
+      ? produtos[pedido.produtoId].toLowerCase()
       : "";
     return (
       cliente.includes(clienteFiltro.toLowerCase()) &&
@@ -45,80 +61,18 @@ export function Pedidos() {
     );
   };
 
-  useEffect(() => {
-    initializeTable();
-  }, []);
-
-  const initializeTable = () => {
-    axios
-      .get("http://localhost:3001/pedidos")
-      .then((response) => {
-        setPedidos(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const onDelete = () => {
-    axios.delete(`http://localhost:3001/pedidos/${idPedido}`)
-      .then((response) => {
+    axios.delete(`http://localhost:3001/pedidos/${codigoPedido}`)
+      .then(response => {
         toast.success(response.data.message, { position: "bottom-right", duration: 2000, });
-        setPedidos(pedidos.filter(pedido => pedido.codigo !== idPedido));
+        initializeTable();
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
         toast.error(error.response.data.message, { position: "bottom-right", duration: 2000, });
       });
     handleClose();
   };
-
-  useEffect(() => {
-    if (
-      pedidos &&
-      Object.keys(clienteNome).length !== pedidos.length &&
-      Object.keys(produtoNome).length !== pedidos.length
-    ) {
-      const promises = [];
-      pedidos.forEach((pedido) => {
-        const nomeCliente = axios
-          .get(`http://localhost:3001/clientes/${pedido.clienteId}`)
-          .then((response) => {
-            const cliente = response.data;
-            setClienteNome((nomeAnteriorCliente) => {
-              return {
-                ...nomeAnteriorCliente,
-                [pedido.clienteId]: cliente.nome,
-              };
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        const nomeProduto = axios
-          .get(`http://localhost:3001/produtos/${pedido.produtoId}`)
-          .then((response) => {
-            const produto = response.data;
-            setProdutoNome((nomeAnteriorProduto) => {
-              return {
-                ...nomeAnteriorProduto,
-                [pedido.produtoId]: produto.nome,
-              };
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        promises.push(nomeCliente);
-        promises.push(nomeProduto);
-      });
-      Promise.all(promises).then(() => {
-        console.log(
-          "Todos os clientes e produtos foram carregados com sucesso."
-        );
-      });
-    }
-  }, [pedidos, clienteNome, produtoNome]);
 
   return (
     <div className="pedidos container">
@@ -176,31 +130,18 @@ export function Pedidos() {
               return (
                 <tr key={pedido.codigo}>
                   <td>{pedido.quantidade}</td>
-                  <td>{clienteNome[pedido.clienteId]}</td>
-                  <td>{produtoNome[pedido.produtoId]}</td>
-                  <td className="d-flex gap-3 justify-content-center">
-                    <Button
-                      variant="danger"
-                      onClick={() => handleShow(pedido.codigo)}
-                    >
+                  <td>{clientes[pedido.clienteId]}</td>
+                  <td>{produtos[pedido.produtoId]}</td>
+                  <td className="d-flex justify-content-center">
+                    <Button variant="danger" className="m-2" onClick={() => handleShow(pedido.codigo)}>
                       <i className="bi bi-trash-fill"></i>
                     </Button>
 
-                    <Button
-                      variant="primary"
-                      as={Link}
-                      to={`/pedidos/editar/${pedido.codigo}`}
-                    >
+                    <Button variant="primary" className="m-2" as={Link} to={`/pedidos/editar/${pedido.codigo}`}>
                       <i className="bi bi-pencil-fill"></i>
                     </Button>
 
-                    <Button
-                      variant="success"
-                      onClick={() => {
-                        setSelectedPedido(pedido);
-                        setShowDetalhes(true);
-                      }}
-                    >
+                    <Button variant="success" className="m-2" as={Link} to={`/pedidos/detalhes/${pedido.codigo}`}>
                       <i className="bi bi-exclamation-square-fill"></i>
                     </Button>
                   </td>
@@ -210,26 +151,6 @@ export function Pedidos() {
           </tbody>
         </Table>
       )}
-      <Modal show={showDetalhes} onHide={handleCloseDetalhes}>
-        <Modal.Header closeButton>
-          <Modal.Title>Informações do Pedido</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedPedido && (
-            <>
-              <p>ID: {selectedPedido.id}</p>
-              <p>Produto: {produtoNome[selectedPedido.produtoId]}</p>
-              <p>Quantidade: {selectedPedido.quantidade}</p>
-              <p>Cliente: {clienteNome[selectedPedido.clienteId]}</p>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={handleCloseDetalhes}>
-            Fechar
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmação</Modal.Title>
