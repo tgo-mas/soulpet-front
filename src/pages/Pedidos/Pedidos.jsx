@@ -86,9 +86,10 @@ export function Pedidos() {
       <div className="d-flex justify-content-between align-items-center">
         <h1 className="m-4">Pedidos</h1>
         <Button as={Link} to="/pedidos/novo">
-          <i className="bi bi-plus-lg me-2"></i> Novo Pedido
+          <i className="bi bi-plus-lg me-2"></i> Pedido
         </Button>
       </div>
+      <hr />
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Filtrar por Cliente</Form.Label>
@@ -119,7 +120,7 @@ export function Pedidos() {
           Limpar filtros
         </Button>
       </Form>
-      <hr />
+      <br />
       {pedidos === null ? (
         <Loader />
       ) : (

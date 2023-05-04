@@ -25,13 +25,14 @@ export function Agendamentos() {
     }
 
     return (
-        <div className="clientes container">
+        <div className="agendamento container">
             <div className="d-flex justify-content-between align-items-center">
-                <h1>Agendamentos</h1>
+                <h1 className="m-4">Agendamentos</h1>
                 <Button as={Link} to="/agendamentos/novo">
                     <i className="bi bi-plus-lg me-2"></i> Agendamento
                 </Button>
             </div>
+            <hr />
             {
                 agendamentos === null ?
                     <Loader />
