@@ -7,15 +7,16 @@ import { Loader } from "../../components/Loader/Loader";
 import { Form } from 'react-bootstrap';
 
 export function Pedidos() {
-  const [pedidos, setPedidos] = useState(null);
-  const [clientes, setClientes] = useState(null);
-  const [produtos, setProdutos] = useState(null);
+  const [pedidos, setPedidos] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [produtos, setProdutos] = useState([]);
   const [show, setShow] = useState(false);
   const [showDetalhes, setShowDetalhes] = useState(false);
-  const [codigoPedido, setCodigoPedido] = useState(null);
+  const [codigoPedido, setCodigoPedido] = useState(0);
   const [clienteFiltro, setClienteFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
   const [selectedPedido, setSelectedPedido] = useState({});
+  
 
   const handleCloseDetalhes = () => {
     setSelectedPedido({});
