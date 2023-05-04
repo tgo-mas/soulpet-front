@@ -4,6 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { uploadFotoPet } from "../../firebase/fotosPets";
 
 export function EditaPet() {
     
@@ -12,15 +13,35 @@ export function EditaPet() {
     const { id } = useParams();
 
     function onSubmit(data) {
-        axios.put(`http://localhost:3001/pets/${id}`, data)
-        .then(response => {
-            toast.success("Pet editado.", { position: "bottom-right", duration: 2000 });
-            navigate("/pets");
-        })
-        .catch(error => {
-            toast.error("Algo deu errado.", { position: "bottom-right", duration: 2000 });
-            console.log(error);
-        });
+        const imagem = data.imagem[0];
+        if (imagem) {
+            const toastId = toast.loading("Upload da imagem...", { position: "top-right" });
+            uploadFotoPet(imagem).then(url => {
+                toast.dismiss(toastId);
+                const pet = {...data, imagem: url};
+                console.log(pet);
+                axios.put(`http://localhost:3001/pets/${id}`, pet)
+                .then(response => {
+                    toast.success("Pet editado.", { position: "bottom-right", duration: 2000 });
+                    navigate("/pets");
+                })
+                .catch(error => {
+                    toast.error("Algo deu errado.", { position: "bottom-right", duration: 2000 });
+                    console.log(error);
+                });
+            });
+        } else {
+            axios.put(`http://localhost:3001/pets/${id}`, data)
+            .then(response => {
+                toast.success("Pet editado.", { position: "bottom-right", duration: 2000 });
+                navigate("/pets");
+            })
+            .catch(error => {
+                toast.error("Algo deu errado.", { position: "bottom-right", duration: 2000 });
+                console.log(error);
+            });
+        }
+
 }
 
 useEffect(() => {
@@ -59,7 +80,10 @@ return (
                 <Form.Control type="date" className={errors.dataNasc && "is-invalid"} {...register("dataNasc", { required: "A data de nascimento é obrigatória." })} />
                 {errors.dataNasc && <Form.Text className="invalid-feedback">{errors.dataNasc.message}</Form.Text>}
             </Form.Group>
-
+            <Form.Group className="mb-3">
+                    <Form.Label>Imagem do Pet</Form.Label>
+                    <Form.Control type="file" accept=".png,.jpg,.jpeg,.gif" {...register("imagem")} />
+                </Form.Group>
             <Button variant="primary" type="submit">Editar</Button>
 
         </Form>

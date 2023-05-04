@@ -177,6 +177,7 @@ export function Pets() {
                             <p>Nome: {selectedPet.nome}</p>
                             <p>Tipo: {selectedPet.tipo}</p>
                             <p>Porte: {selectedPet.porte}</p>
+                            <p>Imagem: <img src={selectedPet.imagem} alt="imagem-pet" className="mw-100"/></p>
                         </>
                     )}
                 </Modal.Body>
