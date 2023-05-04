@@ -60,6 +60,7 @@ export function NovoAgendamento() {
 
     return (
         <div className="container mt-3">
+            <h1>Novo Agendamento</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-floating mb-2">
                     <select className={!isSubmitted ? "form-select" : (errors.petId ? "form-select is-invalid" : "form-select is-valid")}
