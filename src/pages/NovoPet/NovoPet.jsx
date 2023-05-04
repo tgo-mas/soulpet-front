@@ -4,12 +4,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { uploadFotoPet } from "../../firebase/fotosPets";
 
 export function NovoPet() {
+
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [clientes, setClientes] = useState([]);
     const navigator = useNavigate();
+    
 
     useEffect(() => {
         axios.get(`http://localhost:3001/clientes`)
@@ -22,7 +25,24 @@ export function NovoPet() {
     }, [setClientes]);
 
     function onSubmit(data) {
-        axios.post("http://localhost:3001/pets", data)
+        const imagem = data.imagem[0];
+        if (imagem) {
+            const toastId = toast.loading("Upload da imagem...", { position: "top-right" });
+            uploadFotoPet(imagem).then(url => {
+                toast.dismiss(toastId);
+                const pet = {...data, imagem: url};
+                console.log(pet);
+                axios.post("http://localhost:3001/pets", pet)
+                    .then(res => {
+                        toast.success("Pet criado com sucesso!");
+                        navigator("/pets");
+                    })
+                    .catch(err => {
+                        toast.error("Um erro aconteceu!");
+                    });
+            })
+        } else {
+            axios.post("http://localhost:3001/pets", data)
             .then(res => {
                 toast.success("Pet criado com sucesso!");
                 navigator("/pets");
@@ -30,6 +50,7 @@ export function NovoPet() {
             .catch(err => {
                 toast.error("Um erro aconteceu!");
             });
+        }
     }
 
     return (
@@ -81,6 +102,10 @@ export function NovoPet() {
                         className={errors.dataNasc && "is-invalid"}
                         {...register("dataNasc")} />
                     {errors.dataNasc && <Form.Text className="invalid-feedback">{errors.dataNasc.message}</Form.Text>}
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Imagem do Pet</Form.Label>
+                    <Form.Control type="file" accept=".png,.jpg,.jpeg,.gif" {...register("imagem")} />
                 </Form.Group>
                 <Button type="submit" variant="primary">
                     Enviar
