@@ -75,7 +75,7 @@ export function Servicos() {
                                     <td>{servico.nome}</td>
                                     <td>{servico.preco}</td>
                                     <td>
-                                        <Button variant="danger" className="m2" onClick={() => handleShow(servico.id, servico.nome)}>
+                                        <Button variant="danger" className="m-2" onClick={() => handleShow(servico.id, servico.nome)}>
                                             <i className="bi bi-trash-fill"></i>
                                         </Button>
                                         <Button className="m-2" as={Link} to={`/servicos/editar/${servico.id}`}>

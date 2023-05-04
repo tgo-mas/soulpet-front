@@ -8,7 +8,7 @@ import { Paginacao } from "../../components/Paginacao/Paginacao";
 
 export function Pets() {
 
-    const pageSize = 10;
+    const pageSize = 5;
     const [pets, setPets] = useState(null);
     const [clientes, setClientes] = useState(null);
     const [show, setShow] = useState(false);
@@ -127,13 +127,13 @@ export function Pets() {
                                         <td>{pet.porte}</td>
                                         <td>{Intl.DateTimeFormat("pt-br").format(Date.parse(pet.dataNasc))}</td>
                                         <td>
-                                            <Button className="m-2" onClick={() => handleShow(pet.id)}>
+                                            <Button variant="danger" className="m-2" onClick={() => handleShow(pet.id)}>
                                                 <i className="bi bi-trash-fill"></i>
                                             </Button>
                                             <Button className="m-2" as={Link} to={`/pets/editar/${pet.id}`}>
                                                 <i className="bi bi-pencil-fill"></i>
                                             </Button>
-                                            <Button className="m-2" onClick={() => showPet(pet.id)}>
+                                            <Button variant="success" className="m-2" onClick={() => showPet(pet.id)}>
                                                 <i className="bi bi-exclamation-square-fill"></i>
                                             </Button>
                                         </td>
