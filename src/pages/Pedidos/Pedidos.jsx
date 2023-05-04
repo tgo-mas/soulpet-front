@@ -57,7 +57,7 @@ export function Pedidos() {
     axios.delete(`http://localhost:3001/pedidos/${idPedido}`)
       .then((response) => {
         toast.success(response.data.message, { position: "bottom-right", duration: 2000, });
-        setPedidos(pedidos.filter(pedido => pedido.id !== idPedido));
+        setPedidos(pedidos.filter(pedido => pedido.codigo !== idPedido));
       })
       .catch((error) => {
         console.log(error);
@@ -174,7 +174,7 @@ export function Pedidos() {
                   <td className="d-flex gap-2">
                     <Button
                       variant="danger"
-                      onClick={() => handleShow(pedido.id)}
+                      onClick={() => handleShow(pedido.codigo)}
                     >
                       <i className="bi bi-trash-fill"></i>
                     </Button>
@@ -182,7 +182,7 @@ export function Pedidos() {
                     <Button
                       variant="primary"
                       as={Link}
-                      to={`/pedidos/editar/${pedido.id}`}
+                      to={`/pedidos/editar/${pedido.codigo}`}
                     >
                       <i className="bi bi-pencil-fill"></i>
                     </Button>

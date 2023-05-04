@@ -34,7 +34,7 @@ function App() {
           <Route path="/servicos/editar/:id" element={<EditaServico />} />
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/pedidos/novo" element={<NovoPedido />} />
-          <Route path="/pedidos/editar/:id" element={<EditaPedido />} />
+          <Route path="/pedidos/editar/:codigo" element={<EditaPedido />} />
           <Route path="/produtos" element={<Produto />} />
           <Route path="/produtos/novo" element={<NovoProduto />} />
           <Route path="/produtos/editar/:id" element={<EditaProduto />} />
