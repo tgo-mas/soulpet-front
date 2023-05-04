@@ -114,10 +114,10 @@ export function Produto() {
             {produtos.map((produto) => (
               <tr key={produto.id}>
                 <td>{produto.nome}</td>
-                <td>{produto.preco}</td>
+                <td>R${produto.preco.toFixed(2)}</td>
                 <td>{produto.descricao}</td>
-                <td>{produto.desconto}</td>
-                <td>{produto.dataDesconto}</td>
+                <td>{produto.desconto}%</td>
+                <td>{new Date(produto.dataDesconto).toLocaleDateString('pt-BR')}</td>
                 <td>{produto.categoria}</td>
                 <td>
                   <Button variant="danger" className="m-2" onClick={() => handleShow(produto.id)}>
@@ -163,8 +163,8 @@ export function Produto() {
               <p>Nome: {selectedProduto.nome}</p>
               <p>Descrição: {selectedProduto.descricao}</p>
               <p>Preço: R$ {selectedProduto.preco.toFixed(2)}</p>
-              <p>Data Desconto: {selectedProduto.dataDesconto}</p>
-              <p>Desconto: {selectedProduto.desconto}</p>
+              <p>Data Desconto: {new Date (selectedProduto.dataDesconto).toLocaleDateString('pt-BR')}</p>
+              <p>Desconto: {selectedProduto.desconto}%</p>
               <p>Categoria: {selectedProduto.categoria}</p>
             </>
           )}
