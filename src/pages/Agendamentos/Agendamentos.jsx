@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Loader } from "../../components/Loader/Loader";
-import { format } from 'date-fns'; // para formatar a data que vem do banco de dados.
+import { format } from 'date-fns'; 
 
 
 export function Agendamentos() {
@@ -49,7 +49,7 @@ export function Agendamentos() {
                         <tbody>
                             {agendamentos.map(agendamento => {
                                 
-                                //formatar a data de: 2023-05-01T00:00:00.000Z para 01/05/2023.
+                                
                                 const data = new Date(agendamento.dataAgendada);
                                 const dataFormatada = format(data, 'dd/MM/yyyy');
                                 
