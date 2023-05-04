@@ -1,13 +1,21 @@
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { obterEstados, obterCidades } from "../../servicos/ibge";
 
 export function NovoCliente() {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
+
+    const [estados, setEstados] = useState([]);
+    const [cidades, setCidades] = useState([]);
+    const [ufSelecionado, setUfSelecionado] = useState('');
+    const [cidadeSelecionada, setCidadeSelecionada] = useState('');
+    //const [cep, setCep] = useState('');
 
     function onSubmit(data) {
         axios.post("http://localhost:3001/clientes", data)
@@ -20,6 +28,30 @@ export function NovoCliente() {
                 console.log(error);
             });
     }
+
+    useEffect(() => {
+        const buscarEstados = async () => {
+            const estados = await obterEstados();
+            setEstados(estados);
+        };
+    
+        buscarEstados();
+    }, []);
+    
+        const selecionarUf = async (uf) => {
+            setUfSelecionado(uf);
+            const cidades = await obterCidades(uf);
+            setCidades(cidades);
+        };
+    
+        const selecionarCidade = (cidade) => {
+            setCidadeSelecionada(cidade);
+        };
+    
+        // caso implemente API correios
+        // const handleChangeCep = (event) => {
+        //     setCep(event.target.value);
+        // };
 
     return (
         <div className="container">
@@ -44,20 +76,30 @@ export function NovoCliente() {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Cidade</Form.Label>
-                    <Form.Control type="text" className={errors.endereco?.cidade && "is-invalid"} {...register("endereco.cidade", { required: "A cidade é obrigatória.", maxLength: { value: 255, message: "Limite de 255 caracteres."} })} />
-                    {errors.endereco?.cidade && <Form.Text className="invalid-feedback">{errors.endereco?.cidade.message}</Form.Text>}
-                </Form.Group>
-
-                <Form.Group className="mb-3">
                     <Form.Label>UF</Form.Label>
-                    <Form.Control type="text" className={errors.endereco?.uf && "is-invalid"} {...register("endereco.uf", { required: "O UF é obrigatório.", maxLength: { value: 2, message: "Limite de 2 caracteres."} })} />
+                    <Form.Control as="select" 
+                        className={errors.endereco?.uf && "is-invalid"} {...register("endereco.uf", { required: "O UF é obrigatório.", message: "Escolha uma UF."})}
+                        value={ufSelecionado} onChange={(e) => selecionarUf(e.target.value)}>
+                        <option value="">Selecione um estado</option> {estados.map((estado) => (
+                        <option key={estado.id} value={estado.sigla}> {estado.nome} </option>))}
+                    </Form.Control>
                     {errors.endereco?.uf && <Form.Text className="invalid-feedback">{errors.endereco?.uf.message}</Form.Text>}
                 </Form.Group>
 
                 <Form.Group className="mb-3">
+                <Form.Label>Cidade</Form.Label>
+                <Form.Control as="select" 
+                        className={errors.endereco?.cidade && "is-invalid"} {...register("endereco.cidade", { required: "A cidade é obrigatória.", message: "Escolha uma cidade."})}
+                        value={cidadeSelecionada} onChange={(e) => selecionarCidade(e.target.value)}>
+                        <option value="">Selecione uma cidade</option> {cidades.map((cidade) => (
+                        <option key={cidade.id} value={cidade.nome}> {cidade.nome} </option>))}
+                    </Form.Control>
+                    {errors.endereco?.cidade && <Form.Text className="invalid-feedback">{errors.endereco?.cidade.message}</Form.Text>}
+                </Form.Group>
+
+                <Form.Group className="mb-3">
                     <Form.Label>CEP</Form.Label>
-                    <Form.Control type="text" className={errors.endereco?.cep && "is-invalid"} {...register("endereco.cep", { required: "O CEP é obrigatório.", maxLength: { value: 9, message: "Limite de 9 caracteres."} })} />
+                    <Form.Control type="text" className={errors.endereco?.cep && "is-invalid"} {...register("endereco.cep", { required: "O CEP é obrigatório.", pattern: { value: /^[0-9]{5}-[0-9]{3}$/, message: "Digite um CEP válido (ex: 12345-678)." }})} />
                     {errors.endereco?.cep && <Form.Text className="invalid-feedback">{errors.endereco?.cep.message}</Form.Text>}
                 </Form.Group>
 
