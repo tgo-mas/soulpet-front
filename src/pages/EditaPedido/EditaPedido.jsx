@@ -12,7 +12,7 @@ export function EditaPedido() {
     const [clientes, setClientes] = useState([]);
     const { register, handleSubmit, formState: { errors }, control, reset } = useForm();
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { codigo } = useParams();
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -33,7 +33,7 @@ export function EditaPedido() {
 
 
     function onSubmit(data) {
-        axios.put(`http://localhost:3001/pedidos/${id}`, data)
+        axios.put(`http://localhost:3001/pedidos/${codigo}`, data)
             .then(response => {
                 toast.success("Pedido editado.", { position: "bottom-right", duration: 2000 });
                 navigate("/pedidos");
@@ -45,12 +45,12 @@ export function EditaPedido() {
     }
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/pedidos/${id}`)
+        axios.get(`http://localhost:3001/pedidos/${codigo}`)
             .then(response => {
                 const { codigo, quantidade, clienteId, produtoId } = response.data;
                 reset({ codigo, quantidade, clienteId, produtoId });
             })
-    }, [id, reset])
+    }, [codigo, reset])
 
     return (
         <div className="container">
