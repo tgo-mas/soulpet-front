@@ -101,31 +101,39 @@ export function Produto() {
         <Table striped bordered hover className="text-center">
           <thead>
             <tr>
-              <th>Nome</th>
-              <th>Descrição</th>
-              <th>Opções</th>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Descrição</th>
+            <th>Desconto</th>
+            <th className="text-nowrap">Data do Desconto</th>
+            <th>Categoria</th>
+            <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {produtos.map((produto) => (
               <tr key={produto.id}>
                 <td>{produto.nome}</td>
+                <td>{produto.preco}</td>
                 <td>{produto.descricao}</td>
+                <td>{produto.desconto}</td>
+                <td>{produto.dataDesconto}</td>
+                <td>{produto.categoria}</td>
                 <td>
-                <Button variant="danger" className="m-2" onClick={() => handleShow(produto.id)}>
+                  <Button variant="danger" className="m-2" onClick={() => handleShow(produto.id)}>
                     <i className="bi bi-trash-fill"></i>
-                </Button>
-                <Button className="m-2" as={Link} to={`/produtos/editar/${produto.id}`}>
+                  </Button>
+                  <Button className="m-2" as={Link} to={`/produtos/editar/${produto.id}`}>
                     <i className="bi bi-pencil-fill"></i>
-                </Button>
-                <Button variant="success" className="m-2" onClick={() => showProduto(produto.id)}>
+                  </Button>
+                  <Button variant="success" className="m-2" onClick={() => showProduto(produto.id)}>
                     <i className="bi bi-exclamation-square-fill"></i>
-                </Button>
-                                        
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
+
         </Table>
       )}
 
@@ -155,6 +163,9 @@ export function Produto() {
               <p>Nome: {selectedProduto.nome}</p>
               <p>Descrição: {selectedProduto.descricao}</p>
               <p>Preço: R$ {selectedProduto.preco.toFixed(2)}</p>
+              <p>Data Desconto: {selectedProduto.dataDesconto}</p>
+              <p>Desconto: {selectedProduto.desconto}</p>
+              <p>Categoria: {selectedProduto.categoria}</p>
             </>
           )}
         </Modal.Body>
