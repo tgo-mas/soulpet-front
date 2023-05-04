@@ -39,9 +39,9 @@ function App() {
           <Route path="/pedidos/editar/:codigo" element={<EditaPedido />} />
           <Route path="/produtos" element={<Produto />} />
           <Route path="/produtos/novo" element={<NovoProduto />} />
-          <Route path="/produtos/editar/:id" element={<EditaProduto />} />
-          <Route path="/agendamento/novo" element={<NovoAgendamento />} />
+          <Route path="/produtos/editar/:id" element={<EditaProduto />} />          
           <Route path="/agendamentos" element={<Agendamentos />} />
+          <Route path="/agendamentos/novo" element={<NovoAgendamento />} />
         </Route>
       </Routes>
     </BrowserRouter>

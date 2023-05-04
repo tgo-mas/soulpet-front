@@ -45,7 +45,7 @@ export function NovoAgendamento() {
     }
 
     function onSubmit(data) {
-        // Faz a inclusão do timezone na dataAgendada, para evitar erros ao gravar no banco de dados.
+        
         const dataAlterada = moment.tz(data.dataAgendada,'America/Sao_Paulo');
         data.dataAgendada = dataAlterada;
         axios.post("http://localhost:3001/agendamentos", data)
